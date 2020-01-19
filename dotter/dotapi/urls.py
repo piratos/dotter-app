@@ -16,12 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from home import views
+import home, dotapi
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('register', views.register, name='user_register'),
-    path('login', views.user_login, name='user_login'),
-    path('logout', views.user_logout, name='logout'),
-    path('graph', views.graphing, name='graphing'),
 ]

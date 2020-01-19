@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block body_block %}
+  <div class="container">
+    <div class="jumbotron" style="float:left;width:100%;">
+        <h1>Create a graph</h1>
+     <div id="left" style="float:left;width:45%">
+        <form enctype="multipart/form-data" method="POST" id="graphform">
+          {% csrf_token %}
+	  <input type="text", name="name", value="graph name">
+          <input type="submit" name="" value="Create graph">
+        </form>
+	<textarea rows="10" cols="50" name="content" form="graphform">
+digraph D {
+
+  A -> {B, C, D} -> {F}
+
+}
+	</textarea>
+     </div>
+     {% if graph_name %}
+     <div id="right" style="float:left;width:45%;">
+	     <img src="/static/{{graph_public_link}}" alt="{{ graph_name }}">
+     </div>
+     {% endif %}
+    </div>
+    {% if graphs %}
+      <ul>
+        {% for graph in graphs %}
+          <li>
+            <a href="/static/{{ graph.public_link }}">{{ graph.name }}</a>
+          </li>
+         {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+{% endblock %}

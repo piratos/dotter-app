@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django_opentracing.OpenTracingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -121,6 +122,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    '/home/piratos/courses/djangotraced/data/',
+]
 
 LOGGING = {
     'version': 1,
@@ -147,3 +152,18 @@ LOGGING = {
         },
     },
 }
+DATA_PATH = "/home/piratos/courses/djangotraced/data"
+
+import django_opentracing
+
+# OpenTracing settings
+
+# if not included, defaults to True.
+# has to come before OPENTRACING_TRACING setting because python...
+OPENTRACING_TRACE_ALL = True
+
+# Callable that returns an `opentracing.Tracer` implementation.
+OPENTRACING_TRACER_CALLABLE = 'opentracing.Tracer'
+
+OPENTRACING_TRACED_ATTRIBUTES = ['path', 'method']
+

@@ -5,7 +5,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 
 from home.forms import UserForm
+from dotapi.views import generate_graph
+from dotapi.models import Graph
 
+import json
 import logging
 logger = logging.getLogger('home.views')
 
@@ -49,3 +52,14 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('home:index'))
+
+def graphing(request):
+    graphs = Graph.objects.filter(author=request.user)
+    if request.method == 'POST':
+        graph_ser = generate_graph(request)
+        graph_dict = json.loads(graph_ser)[0].get('fields')
+        graph_name = graph_dict['name']
+        graph_public_link = graph_dict['public_link']
+        if graph_dict.get('fail'):
+            return HttpResponseRedirect(reverse('home:graphing'))
+    return render(request, 'graph.html',locals())
