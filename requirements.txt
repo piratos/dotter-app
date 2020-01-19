@@ -1,0 +1,7 @@
+asgiref==3.2.3
+Django==3.0.2
+django-opentracing==1.1.0
+opentracing==2.3.0
+pytz==2019.3
+six==1.14.0
+sqlparse==0.3.0
