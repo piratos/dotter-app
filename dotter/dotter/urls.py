@@ -16,10 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-import home, dotapi
+import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('dot/', include(('dotapi.urls', 'dotapi'), namespace='dotapi')),
     path('', include(('home.urls', 'home'), namespace='home')),
 ]

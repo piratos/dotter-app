@@ -12,10 +12,13 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import logging
+import django_opentracing
+import opentracing
+from jaeger_client import Config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+DATA_PATH = os.path.join(BASE_DIR, 'data')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -39,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
-    'dotapi',
 ]
 
 MIDDLEWARE = [
@@ -124,7 +126,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-    '/home/piratos/courses/djangotraced/data/',
+    DATA_PATH,
 ]
 
 LOGGING = {
@@ -138,7 +140,7 @@ LOGGING = {
         },
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': '/home/piratos/courses/djangotraced/debug.log',
             'formatter': 'verbose',
@@ -147,12 +149,11 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
     },
 }
-DATA_PATH = "/home/piratos/courses/djangotraced/data"
 
 import django_opentracing
 
@@ -163,7 +164,25 @@ import django_opentracing
 OPENTRACING_TRACE_ALL = True
 
 # Callable that returns an `opentracing.Tracer` implementation.
-OPENTRACING_TRACER_CALLABLE = 'opentracing.Tracer'
+#OPENTRACING_TRACER_CALLABLE = 'django_opentracing.DjangoTracing()'
 
-OPENTRACING_TRACED_ATTRIBUTES = ['path', 'method']
+#OPENTRACING_TRACED_ATTRIBUTES = ['META']
 
+config = Config(
+    config={ # usually read from some yaml config
+        'sampler': {
+            'type': 'const',
+            'param': 1,
+        },
+        'local_agent': {
+            'reporting_host': 'localhost',
+            'reporting_port': '5775',
+        },
+        'logging': True,
+    },
+    service_name='python-djangotraced',
+    validate=True,
+)
+# this call also sets opentracing.tracer
+tracer = config.initialize_tracer()
+OPENTRACING_TRACING = django_opentracing.DjangoTracing(tracer)

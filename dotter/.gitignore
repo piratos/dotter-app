@@ -1,2 +1,4 @@
 data/*
 db.sqlite3
+*.pyc
+debug.log
