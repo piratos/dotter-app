@@ -142,7 +142,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/home/piratos/courses/djangotraced/debug.log',
+            'filename': "{0}/debug.log".format(BASE_DIR),,
             'formatter': 'verbose',
         },
     },
